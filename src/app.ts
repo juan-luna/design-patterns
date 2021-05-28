@@ -10,9 +10,7 @@ require('dotenv').config();
 /**
  * Client Code. Entry point.
  */
-//commandPatternExample();
-
-commandAndStrategyExample();
+commandPatternExample();
 
 
 /** Commnand Pattern */
