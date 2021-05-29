@@ -1,4 +1,4 @@
-export class ExponencialPolicy {
+export class ExponentialPolicy {
 
     private retryCount: number;
 

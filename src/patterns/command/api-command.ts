@@ -1,3 +1,4 @@
+import { Observable } from "rxjs";
 import { Command } from "./command";
 import { AxiosService } from "./receiver";
 
@@ -13,7 +14,7 @@ export class ApiCommand<T, U> implements Command {
         private endpoint: string, 
         private payload: T) {}
 
-    public execute() {
+    public execute(): Observable<U> {
         console.log('Executing ApiCommand...')
         return this.receiver.callAPI(this.endpoint, this.payload);
     }

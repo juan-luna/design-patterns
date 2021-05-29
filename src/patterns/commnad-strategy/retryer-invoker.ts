@@ -1,7 +1,7 @@
-import { of, throwError, timer } from "rxjs";
-import { concatMap, delay, delayWhen, retryWhen, switchMap, take, tap } from "rxjs/operators";
+import { of } from "rxjs";
+import { switchMap } from "rxjs/operators";
 import { Command } from "../command/command";
-import { RetryPolicy } from "../strategy/retry-policy";
+import { BackoffPolicy } from "../strategy/backoff-policy";
 
 /**
  * The Invoker is associated with one or several commands. It sends a request to the command.
@@ -11,16 +11,16 @@ import { RetryPolicy } from "../strategy/retry-policy";
  */
 export class RestRetryerInvoker<U> {
 
-    private onFinish: Command;
+    private _onSuccess: Command;
 
-    constructor(private onStart: Command, private retryPolicy: RetryPolicy) {
+    constructor(private onStart: Command, private policy: BackoffPolicy) {
     }
 
     /**
-     * Initialize commands. Optional final command.
+     * Initialize commands. Final command.
      */
-    public setOnFinish(command: Command): void {
-        this.onFinish = command;
+    public onSuccess(command: Command): void {
+        this._onSuccess = command;
     }
 
     /**
@@ -28,24 +28,13 @@ export class RestRetryerInvoker<U> {
      * It just executes command(s)
      */
     public createEntity(): void {
-
-        this.retryPolicy.incrementTry();
-        of(1).pipe(
-            switchMap(() => this.onStart.execute()),
-            retryWhen(errors => 
-                errors.pipe(
-                    tap(err => {
-                        // console.log(err);
-                        this.retryPolicy.incrementTry();
-                        console.log('Retrying...');
-                    }),
-                    delay(this.retryPolicy.currentWait()),
-                    take(this.retryPolicy.maxTries)
-                )),
-            switchMap(res => this.onFinish.execute())
-        ).subscribe({
-                next: (v) => console.log(v),
-                error: (e) => console.error('oops no success in main command')
+        of(0)
+            .pipe(
+                switchMap(() => this.onStart.execute()),
+                this.policy.backoff())
+            .subscribe({
+                next: (v) => this._onSuccess.execute().subscribe(),
+                error: (e) => console.error('Invocation failed after ' + this.policy.maxTries + ' retries')
         });
     }
 

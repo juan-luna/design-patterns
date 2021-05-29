@@ -9,16 +9,16 @@ import { Command } from "./command";
  */
 export class RestInvoker<U> {
 
-    private onFinish: Command;
+    private _onSuccess: Command;
 
     constructor(private onStart: Command) {
     }
 
     /**
-     * Initialize commands. Optional final command.
+     * Initialize commands. onFinish Command.
      */
-    public setOnFinish(command: Command): void {
-        this.onFinish = command;
+    public onSuccess(command: Command): void {
+        this._onSuccess = command;
     }
 
     /**
@@ -28,7 +28,7 @@ export class RestInvoker<U> {
     public createEntity(): void {
         this.onStart.execute()
             .pipe(
-                switchMap(res => this.onFinish.execute())
+                switchMap(res => this._onSuccess.execute())
             )
             .subscribe({
                 next: (v) => console.log(v),
