@@ -7,7 +7,7 @@ import { Command } from "./command";
  *  1) Execute a main comand
  *  2) Optionally, executes a final command.
  */
-export class RestInvoker<U> {
+export class SimpleInvoker<U> {
 
     private _onSuccess: Command;
 

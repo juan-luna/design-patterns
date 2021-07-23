@@ -9,6 +9,7 @@ import { map, tap } from "rxjs/operators";
 export class AxiosService<T, U> {
 
     public callAPI(endpoint: string, payload: T): Observable<U> {
+        console.log('callingAPI: ', endpoint, JSON.stringify(payload));
         return from(
             axios.post(
                 endpoint, 

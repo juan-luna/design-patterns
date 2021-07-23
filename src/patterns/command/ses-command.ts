@@ -13,7 +13,7 @@ export class SimpleEmailServiceCommand<U> implements Command {
     ) {}
 
     execute(): Observable<String> {
-        console.log('Executing SES Command...')
+        console.log('Executing SES Command...');
         return of('Email sent: ' + JSON.stringify(this.email));
     }
 

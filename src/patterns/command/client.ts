@@ -1,6 +1,7 @@
 import { EMAIL_PARAMS } from "../../data";
 import { ApiCommand } from "./api-command";
-import { RestInvoker } from "./invoker";
+import { SimpleInvoker } from "./invoker";
+import { PipeInvoker } from "./pipe-invoker";
 import { AxiosService } from "./receiver";
 import { SimpleEmailServiceCommand } from "./ses-command";
 
@@ -17,9 +18,17 @@ export function commandPatternExample() {
             userId: 1
         }
     );
-    const invoker = new RestInvoker(apiCommand); // Set main command
-    invoker.onSuccess(new SimpleEmailServiceCommand(EMAIL_PARAMS)); // Set optional command
+	const sesCommand = new SimpleEmailServiceCommand(EMAIL_PARAMS);
+    const invoker = new SimpleInvoker(apiCommand); // Set main command
+    invoker.onSuccess(sesCommand); // Set optional command
     invoker.createEntity();
 
     // Same Invoker class could be re-used for creating many other entities.
+
+
+	new PipeInvoker()
+		.pipe(
+			apiCommand,
+			sesCommand
+		).run();
 };

@@ -9,7 +9,7 @@ import { BackoffPolicy } from "../strategy/backoff-policy";
  *  1) Execute a main comand
  *  2) Optionally, executes a final command.
  */
-export class RestRetryerInvoker<U> {
+export class RetryerInvoker<U> {
 
     private _onSuccess: Command;
 
